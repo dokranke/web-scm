@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+		<script src="../lib/jquery-3.1.1.js"></script>
+		<script src="../lib/NBT.js"></script>
+		<script>
+			var rootTag;
+			function buildTree(tag, tagKey) {
+				var children = [];
+				if (tag.tagType() == 10) { // CompoundTag
+					var iter = tag.getValue();
+					for (iter.begin(); !iter.atEnd(); iter.next()) {
+						var child = buildTree(iter.getTag());
+						child.data.key = iter.getName();
+						children.push(child);
+					}
+				} else if (tag.tagType() == 9) { // ListTag
+					for (i = 0, j = tag.getCount(); i < j; i++) {
+						var child = tag.getElement(i);
+						child.data.key = i;
+						children.push(child);
+					}
+				}
+				return {
+					data: {key:tag.getName()},
+					text: tag.toString(tagKey),
+					children: children
+				}
+			}
+
+			$(document).ready(function(){
+				if (window.location.href.indexOf('?') != -1) {
+					$("div").css("display", "block");
+					var gist_id = window.location.href.slice(window.location.href.indexOf('?') + 1);
+					$("#gist-id").text(gist_id);
+					var url = "https://gist.githubusercontent.com/anonymous/" + gist_id + "/raw";
+					$("#url").text(url);
+					$("#content").load(url, function(responseText,status,xhr){
+						if (status != "error") {
+							var decoded = atob(responseText);
+							$("#atob").text(decoded);
+							$("#nbt").text("Wait for NBT-Library to load...");
+							console.log("Loading...");
+
+							while (Module.Tag === undefined) { /* Wait for emscripten */ }
+							Module.TOTAL_MEMORY = 64 * 1024 * 1024;
+
+							console.log("Working...")
+							var nbt = Module.Tag.deserializeCompressed(decoded, false, -1);
+							$("#nbt").text((typeof nbt));
+							console.log("Create Tree...")
+							var tree = buildTree(nbt,0);
+							console.log(tree);
+						} else {
+							$("#content").text("Invaild gist :/");
+							$("#content").css("color", "#f00");
+							$("#atob, #nbt").parent().css("display", "none");
+						}
+					});
+				}
+			});
+	</script>
+	</head>
+	<body>
+		<h1>Test: gistToNBT - irath96 lib</h1>
+		<p>
+			In this test we are trying to convert a gist to nbt,<br/>
+			by using jQuery to fetch it, decode it using base64 and parse it.<br/>
+			<br/>
+			To try this test append <code>?&lt;gist-id&gt;</code> to the url.
+		</p>
+		<br/>
+		<div style="display:none;">
+			<p>Found parameter: <code id="gist-id"></code></p>
+			<p>URL: <code id="url"></code></p>
+			<p>Raw content:<br/><code id="content" style="word-wrap: break-word; white-space: pre-wrap;"></code></p>
+			<p>Decoded content:<br/><code id="atob"></code></p>
+			<p>NBT:<br/><code id="nbt" style="color:#f00;">Error - Library missing :/</code></p>
+		</div>
+
+	</body>
+</html>

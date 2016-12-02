@@ -1,0 +1,152 @@
+<!--[if IE]><!DOCTYPE html><![endif]-->
+<html>
+	<head>
+		<style>
+			body {
+				margin: 0px;
+				padding: 0px;
+			}
+
+			#infobox {
+				position: absolute;
+				top: 12px;
+				left: 12px;
+				z-index: 1;
+				color: #fff;
+			}
+
+			h2, a {
+				margin: 0px;
+				color: #fff;
+				text-decoration: none;
+			}
+
+			a:hover {
+				color: #ddd;
+			}
+		</style>
+		<!--<meta http-equiv="X-UA-Compatible" content="IE=Edge" />-->
+		<script src="../lib/p5.min.js"></script>
+		<script src="../lib/p5.dom.js"></script>
+		<script src="../lib/jquery-3.1.1.js"></script>
+		<script>
+			document.addEventListener('contextmenu', event => event.preventDefault());
+			/*
+			 * This goes into the sketch.js later
+			 */
+			function setup() {
+				// Fullscreen Canvas
+				createCanvas(window.innerWidth, window.innerHeight, WEBGL);
+				frameRate(15);
+			}
+
+			/*
+			 * On resize refit
+			 */
+			window.onresize = refit;
+			function refit() {
+				resizeCanvas(window.innerWidth, window.innerHeight);
+				redraw();
+			}
+
+			var scl = 500;
+			var x = 0, z = 0;
+			var pitch = 25, yaw = -45;
+			var pitchMode = false;
+			function draw() {
+				update();
+
+				/*
+				 * Drawings go here
+				 */
+				background(0);
+				ambientLight(255);
+
+				drawCircuitBoard();
+			}
+
+			function mouseWheel(event) {
+				scl -= event.delta / 10;
+			}
+
+			function update() {
+				if (keyIsPressed === true) {
+					if (keyCode == 82 || keyCode == 114) { // R
+						x = 0;
+						y = 0;
+						yaw = -45;
+						pitch = 25;
+						scl = 500;
+					} else if (48 <= keyCode && keyCode <= 57) {
+						switch (keyCode-48) {
+							case 0:
+								pitch = 25;
+								break;
+							case 1:
+								yaw = 90;
+								break;
+							case 2:
+								yaw = 135;
+								break;
+							case 3:
+								yaw = 180;
+								break;
+							case 4:
+								yaw = 45;
+								break;
+							case 5:
+								yaw = 0;
+								pitch = 90;
+								x = 0;
+								y = 0;
+								scl = 500;
+								break;
+							case 6:
+								yaw = 225;
+								break;
+								case 7:
+									yaw = 0;
+									break;
+								case 8:
+									yaw = 315;
+									break;
+								case 9:
+									yaw = 270;
+									break;
+						}
+					}
+				} else if (mouseIsPressed) {
+					if (mouseButton == RIGHT) {
+						x += (mouseX - pmouseX);
+						z += (mouseY - pmouseY);
+					} else {
+						yaw += (mouseX - pmouseX) / 10;
+						pitch += (mouseY - pmouseY) / 10;
+					}
+				}
+				translate(x,0,z);
+				rotateX(radians(pitch));
+				rotateY(radians(yaw));
+
+			}
+
+			function drawCircuitBoard() {
+				ambientMaterial(216);
+ 				box(scl,scl/64,scl);
+ 				translate(0,-scl/256,0);
+ 				ambientMaterial(232);
+ 				box(scl/8*7,scl/64,scl/8*7);
+				translate(-scl/8*3.75,-scl/256,-scl/8*3.75);
+				ambientMaterial(184,184,184);
+				sphere(scl/64);
+ 				translate(scl/8*3.75,scl/128,scl/8*3.75);
+			}
+		</script>
+	</head>
+	<body>
+		<div id="infobox">
+			<h2><a href="#" id="title">Long Title&nbsp;</a></h2>
+			from <a href="#" id="author">gDKdev&nbsp;</a><br/>
+	</div>
+	</body>
+</html>

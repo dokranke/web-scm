@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+		<script src="../lib/jquery-3.1.1.js"></script>
+		<script src="../lib/gunzip.min.js"></script>
+		<script src="../lib/nbt-sj.js"></script>
+		<script>
+
+			function stringToArrayBuffer(str) {
+				if (typeof str !== 'string') throw 'str must be a string';
+				var i, x, arr = new Uint8Array(str.length);
+				for (i = 0; i < str.length; i++) { 
+					x = str.charCodeAt(i);
+					if (x < 0 || x > 255) throw 'Element ' + i + ' out of range: ' + x;  arr[i] = x;
+				}
+				return arr.buffer;
+			}
+
+			$(document).ready(function(){
+				if (window.location.href.indexOf('?') != -1) {
+					$("div").css("display", "block");
+					var gist_id = window.location.href.slice(window.location.href.indexOf('?') + 1);
+					$("#gist-id").text(gist_id);
+					var url = "https://gist.githubusercontent.com/anonymous/" + gist_id + "/raw";
+					$("#url").text(url);
+					$("#content").load(url, function(responseText,status,xhr){
+						if (status != "error") {
+							var decoded = atob(responseText);
+							$("#atob").text(decoded);
+							nbt.parse(stringToArrayBuffer(decoded), function(error, data) {
+								$("#nbt").text(JSON.stringify(data));
+							});
+						} else {
+							$("#content").text("Invaild gist :/");
+							$("#content").css("color", "#f00");
+							$("#atob, #nbt").parent().css("display", "none");
+						}
+					});
+				}
+			});
+	</script>
+	</head>
+	<body>
+		<h1>Test: gistToNBT - sjmulder lib</h1>
+		<p>
+			In this test we are trying to convert a gist to nbt,<br/>
+			by using jQuery to fetch it, decode it using base64 and parse it.<br/>
+			<br/>
+			To try this test append <code>?&lt;gist-id&gt;</code> to the url.
+		</p>
+		<br/>
+		<div style="display:none;">
+			<p>Found parameter: <code id="gist-id"></code></p>
+			<p>URL: <code id="url"></code></p>
+			<p>Raw content:<br/><code id="content" style="word-wrap: break-word; white-space: pre-wrap;"></code></p>
+			<p>Decoded content:<br/><code id="atob"></code></p>
+			<p>NBT:<br/><code id="nbt"></code></p>
+		</div>
+
+	</body>
+</html>

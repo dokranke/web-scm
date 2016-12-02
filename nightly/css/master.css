@@ -1,0 +1,41 @@
+body {
+  margin: 0px;
+  padding: 0px;
+  background-color: #000;
+}
+
+#infobox {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  z-index: 1;
+  color: #fff;
+}
+
+#version {
+  position: absolute;
+  top: 12px;
+  left: 50%;
+  transform: translate(-125px,0px);
+  z-index: 1;
+  color: #fff;
+  text-shadow: 0px 0px 3px #f00;
+}
+
+#setcon {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 1;
+  color: #fff;
+}
+
+h2, h3, a {
+  margin: 0px;
+  color: #fff;
+  text-decoration: none;
+}
+
+a:hover {
+  color: #ddd;
+}
