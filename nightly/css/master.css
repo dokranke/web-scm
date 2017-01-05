@@ -30,10 +30,26 @@ body {
   color: #fff;
 }
 
-h2, h3, a {
+#inv_gist {
+  position: absolute;
+  display: none;
+  top: 50%;
+  left: 50%;
+  width: 340px;
+  height: 38px;
+  transform: translate(-170px,-19px);
+  z-index: 1;
+  color: #fff;
+}
+
+h1, h2, h3, a {
   margin: 0px;
   color: #fff;
   text-decoration: none;
+}
+
+h1 {
+  color: #f00;
 }
 
 a:hover {

@@ -3,12 +3,28 @@
 */
 
 var camera;
+var data;
 
 function setup() {
   // Fullscreen Canvas
   createCanvas(window.innerWidth, window.innerHeight, WEBGL);
   camera = createCamera();
   document.addEventListener('contextmenu', event => event.preventDefault());
+
+  var gurl = getURLParams().gist;
+  if (gurl !== undefined) {
+    fetchGist(gurl, function(result) {
+      if (result != GIST_ERR) {
+        toNBT_sjmulder(result, function(dat){
+          data = dat;
+        });
+      } else {
+        $('#inv_gist').show();
+      }
+    });
+  } else {
+    $('#inv_gist').show();
+  }
 }
 
 window.onresize = refit;
